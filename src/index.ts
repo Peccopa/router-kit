@@ -8,8 +8,6 @@ const router = new Router({
 });
 
 function render(state: RouterState): void {
-  console.log(state);
-
   const main = document.querySelector('#main');
 
   if (!main) return;
@@ -17,7 +15,12 @@ function render(state: RouterState): void {
   main.replaceChildren();
 
   const title = document.createElement('h1');
-  title.textContent = state.route.name;
+
+  if (!state.route) {
+    title.textContent = '404 - Page not found';
+  } else {
+    title.textContent = state.route.name;
+  }
 
   main.appendChild(title);
 }
@@ -27,5 +30,3 @@ router.subscribe((state) => {
 });
 
 router.start();
-
-router.navigate('https://google.com');

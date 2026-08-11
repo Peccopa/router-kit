@@ -32,8 +32,8 @@ export class Router {
     this.started = false;
   }
 
-  getRoute(path: string): Route {
-    return this.routes[path] || this.routes['/'];
+  getRoute(path: string): Route | undefined {
+    return this.routes[path];
   }
 
   navigate(to: string): void {

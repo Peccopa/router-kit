@@ -3,5 +3,5 @@ import type { Route } from './route';
 
 export type RouterState = {
   location: RouterLocation;
-  route: Route;
+  route: Route | undefined;
 };
