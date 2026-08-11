@@ -1,4 +1,5 @@
 import { Router } from './core/Router';
+import type { RouterState } from './types/router-state';
 
 const router = new Router({
   '/': { name: 'home' },
@@ -6,22 +7,21 @@ const router = new Router({
   '/users': { name: 'users' },
 });
 
-function render(): void {
-  const currentRoute = router.getRoute(window.location.pathname);
-
+function render(state: RouterState): void {
   const main = document.querySelector('#main');
 
-  if (main) {
-    main.replaceChildren();
+  if (!main) return;
 
-    const title = document.createElement('h1');
-    title.textContent = currentRoute.name;
-    main.appendChild(title);
-  }
+  main.replaceChildren();
+
+  const title = document.createElement('h1');
+  title.textContent = state.route.name;
+
+  main.appendChild(title);
 }
 
-router.subscribe(() => {
-  render();
+router.subscribe((state) => {
+  render(state);
 });
 
 router.start();

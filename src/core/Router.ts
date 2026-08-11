@@ -65,11 +65,19 @@ export class Router {
   };
 
   private handleClick = (event: MouseEvent): void => {
-    if (!(event.target instanceof HTMLAnchorElement)) return;
+    if (!(event.target instanceof Element)) return;
+
+    const link = event.target.closest('a');
+
+    if (!link) return;
+
+    const url = new URL(link.href);
+
+    if (url.origin !== window.location.origin) return;
 
     event.preventDefault();
 
-    this.navigate(event.target.pathname);
+    this.navigate(link.pathname);
   };
 
   private getLocation(): RouterLocation {
