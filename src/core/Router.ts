@@ -4,25 +4,28 @@ import type { Route } from '../types/route';
 export class Router {
   private routes: Record<string, Route>;
   private listeners: Listener[] = [];
+  private started = false;
 
   constructor(routes: Record<string, Route>) {
     this.routes = routes;
   }
 
   start(): void {
-    window.addEventListener('popstate', () => {
-      const route = this.getRoute(window.location.pathname);
+    if (this.started) return;
 
-      this.notify(route);
-    });
+    this.started = true;
 
-    document.addEventListener('click', (event) => {
-      if (!(event.target instanceof HTMLAnchorElement)) return;
+    window.addEventListener('popstate', this.handlePopState);
+    document.addEventListener('click', this.handleClick);
+  }
 
-      event.preventDefault();
+  stop(): void {
+    if (!this.started) return;
 
-      this.navigate(event.target.pathname);
-    });
+    window.removeEventListener('popstate', this.handlePopState);
+    document.removeEventListener('click', this.handleClick);
+
+    this.started = false;
   }
 
   getRoute(path: string): Route {
@@ -54,4 +57,18 @@ export class Router {
       listener(route);
     });
   }
+
+  private handlePopState = (): void => {
+    const route = this.getRoute(window.location.pathname);
+
+    this.notify(route);
+  };
+
+  private handleClick = (event: MouseEvent): void => {
+    if (!(event.target instanceof HTMLAnchorElement)) return;
+
+    event.preventDefault();
+
+    this.navigate(event.target.pathname);
+  };
 }
