@@ -75,6 +75,16 @@ export class Router {
 
     if (url.origin !== window.location.origin) return;
 
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey ||
+      link.target === '_blank'
+    ) {
+      return;
+    }
+
     event.preventDefault();
 
     this.navigate(link.pathname);
