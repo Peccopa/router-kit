@@ -7,7 +7,9 @@ export class Router {
 
   constructor(routes: Record<string, Route>) {
     this.routes = routes;
+  }
 
+  start(): void {
     window.addEventListener('popstate', () => {
       const route = this.getRoute(window.location.pathname);
 

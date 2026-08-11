@@ -6,6 +6,8 @@ const router = new Router({
   '/users': { name: 'users' },
 });
 
+router.start();
+
 function render(): void {
   const currentRoute = router.getRoute(window.location.pathname);
 
