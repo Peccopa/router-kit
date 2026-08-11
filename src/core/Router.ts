@@ -36,8 +36,12 @@ export class Router {
     return this.routes[path] || this.routes['/'];
   }
 
-  navigate(path: string): void {
-    history.pushState({}, '', path);
+  navigate(to: string): void {
+    const url = new URL(to, window.location.origin);
+
+    if (url.origin !== window.location.origin) return;
+
+    history.pushState({}, '', url.href);
 
     this.notify(this.getState());
   }
@@ -87,7 +91,7 @@ export class Router {
 
     event.preventDefault();
 
-    this.navigate(link.pathname);
+    this.navigate(link.href);
   };
 
   private getLocation(): RouterLocation {

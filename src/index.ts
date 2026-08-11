@@ -8,6 +8,8 @@ const router = new Router({
 });
 
 function render(state: RouterState): void {
+  console.log(state);
+
   const main = document.querySelector('#main');
 
   if (!main) return;
@@ -25,3 +27,5 @@ router.subscribe((state) => {
 });
 
 router.start();
+
+router.navigate('https://google.com');
