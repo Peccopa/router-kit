@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "test": "vitest",
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "repository": {
     "type": "git",
