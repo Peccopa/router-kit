@@ -1,3 +1,3 @@
-import type { Route } from './route';
+import type { RouterState } from './router-state';
 
-export type Listener = (route: Route) => void;
+export type Listener = (state: RouterState) => void;

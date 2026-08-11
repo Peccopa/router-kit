@@ -1,5 +1,7 @@
 import type { Listener } from '../types/listener';
 import type { Route } from '../types/route';
+import type { RouterLocation } from '../types/router-location';
+import type { RouterState } from '../types/router-state';
 
 export class Router {
   private routes: Record<string, Route>;
@@ -17,6 +19,8 @@ export class Router {
 
     window.addEventListener('popstate', this.handlePopState);
     document.addEventListener('click', this.handleClick);
+
+    this.notify(this.getState());
   }
 
   stop(): void {
@@ -35,9 +39,7 @@ export class Router {
   navigate(path: string): void {
     history.pushState({}, '', path);
 
-    const route = this.getRoute(window.location.pathname);
-
-    this.notify(route);
+    this.notify(this.getState());
   }
 
   subscribe(listener: Listener): () => void {
@@ -52,16 +54,14 @@ export class Router {
     };
   }
 
-  private notify(route: Route): void {
+  private notify(state: RouterState): void {
     this.listeners.forEach((listener) => {
-      listener(route);
+      listener(state);
     });
   }
 
   private handlePopState = (): void => {
-    const route = this.getRoute(window.location.pathname);
-
-    this.notify(route);
+    this.notify(this.getState());
   };
 
   private handleClick = (event: MouseEvent): void => {
@@ -71,4 +71,23 @@ export class Router {
 
     this.navigate(event.target.pathname);
   };
+
+  private getLocation(): RouterLocation {
+    const url = new URL(window.location.href);
+
+    return {
+      href: url.href,
+      origin: url.origin,
+      pathname: url.pathname,
+      search: url.search,
+      hash: url.hash,
+    };
+  }
+
+  private getState(): RouterState {
+    return {
+      location: this.getLocation(),
+      route: this.getRoute(window.location.pathname),
+    };
+  }
 }
