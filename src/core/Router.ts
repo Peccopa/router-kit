@@ -7,6 +7,20 @@ export class Router {
 
   constructor(routes: Record<string, Route>) {
     this.routes = routes;
+
+    window.addEventListener('popstate', () => {
+      const route = this.getRoute(window.location.pathname);
+
+      this.notify(route);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof HTMLAnchorElement)) return;
+
+      event.preventDefault();
+
+      this.navigate(event.target.pathname);
+    });
   }
 
   getRoute(path: string): Route {

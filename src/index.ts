@@ -1,38 +1,13 @@
-import type { Route } from './types/route';
-type Listener = (route: Route) => void;
+import { Router } from './core/Router';
 
-function subscribe(listener: Listener): () => void {
-  listeners.push(listener);
-
-  return () => {
-    const index = listeners.indexOf(listener);
-
-    if (index !== -1) {
-      listeners.splice(index, 1);
-    }
-  };
-}
-
-function notify(route: Route): void {
-  listeners.forEach((listener) => {
-    listener(route);
-  });
-}
-
-const listeners: Listener[] = [];
-
-const routes: Record<string, Route> = {
+const router = new Router({
   '/': { name: 'home' },
   '/about': { name: 'about' },
   '/users': { name: 'users' },
-};
-
-function getRoute(path: string): Route {
-  return routes[path] || routes['/'];
-}
+});
 
 function render(): void {
-  const currentRoute = getRoute(window.location.pathname);
+  const currentRoute = router.getRoute(window.location.pathname);
 
   const main = document.querySelector('#main');
 
@@ -45,33 +20,8 @@ function render(): void {
   }
 }
 
-document.addEventListener('click', (event) => {
-  event.preventDefault();
-
-  if (!(event.target instanceof HTMLAnchorElement)) return;
-
-  const path = event.target.pathname;
-  navigate(path);
-});
-
-function navigate(path: string): void {
-  history.pushState({}, '', path);
-
-  const route = getRoute(window.location.pathname);
-
-  notify(route);
+router.subscribe(() => {
   render();
-}
-
-window.addEventListener('popstate', () => {
-  const route = getRoute(window.location.pathname);
-
-  notify(route);
-  render();
-});
-
-subscribe((route) => {
-  console.log('Route changed:', route);
 });
 
 render();
