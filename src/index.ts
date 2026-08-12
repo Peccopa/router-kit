@@ -5,6 +5,10 @@ const router = new Router({
   '/': { name: 'home' },
   '/about': { name: 'about' },
   '/users': { name: 'users' },
+  '/users/:id': { name: 'user' },
+  '/users/:userId/posts/:postId': {
+    name: 'user-post',
+  },
 });
 
 function render(state: RouterState): void {
@@ -25,8 +29,17 @@ function render(state: RouterState): void {
   main.appendChild(title);
 }
 
+// router.subscribe((state) => {
+//   render(state);
+// });
+
 router.subscribe((state) => {
+  console.log(state);
   render(state);
 });
+
+// router.navigate('/users/42');
+
+router.navigate('/users/42/posts/7');
 
 router.start();

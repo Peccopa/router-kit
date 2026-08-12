@@ -1,5 +1,8 @@
+import { matchRoute } from '../utils/matchRoute';
+
 import type { Listener } from '../types/listener';
 import type { Route } from '../types/route';
+import type { RouteMatch } from '../types/route-match';
 import type { RouterLocation } from '../types/router-location';
 import type { RouterState } from '../types/router-state';
 
@@ -32,8 +35,19 @@ export class Router {
     this.started = false;
   }
 
-  getRoute(path: string): Route | undefined {
-    return this.routes[path];
+  getRoute(path: string): RouteMatch | undefined {
+    for (const [pattern, route] of Object.entries(this.routes)) {
+      const match = matchRoute(pattern, path);
+
+      if (match) {
+        return {
+          route,
+          params: match.params,
+        };
+      }
+    }
+
+    return undefined;
   }
 
   navigate(to: string): void {
@@ -107,9 +121,12 @@ export class Router {
   }
 
   private getState(): RouterState {
+    const match = this.getRoute(window.location.pathname);
+
     return {
       location: this.getLocation(),
-      route: this.getRoute(window.location.pathname),
+      route: match?.route,
+      params: match?.params ?? {},
     };
   }
 }
